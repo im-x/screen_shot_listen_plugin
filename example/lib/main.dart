@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'dart:async';
 
-import 'package:flutter/services.dart';
 import 'package:screen_shot_listen_plugin/screen_shot_listen_plugin.dart';
 
 void main() {
@@ -14,8 +12,6 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  String _platformVersion = 'Unknown';
-
   @override
   void initState() {
     super.initState();
@@ -23,11 +19,11 @@ class _MyAppState extends State<MyApp> {
   }
 
   // Platform messages are asynchronous, so we initialize in an async method.
- initPlatformState()  {
-   ScreenShotListenPlugin().addScreenShotListener((s){
-     print("ScreenShotListenPlugin>>>>>>$s");
-   });
-   ScreenShotListenPlugin().startListen();
+  initPlatformState() {
+    ScreenShotListenPlugin().addScreenShotListener((s) {
+      print("ScreenShotListenPlugin>>>>>>$s");
+    });
+    ScreenShotListenPlugin().startListen();
 //    String platformVersion;
 //    // Platform messages may fail, so we use a try/catch PlatformException.
 //    try {
