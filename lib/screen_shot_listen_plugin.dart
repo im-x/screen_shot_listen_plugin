@@ -12,14 +12,16 @@ class ScreenShotListenPlugin {
   EventChannel _screenShotEventChannel =
       const EventChannel(CECE_SCREEN_SHOT_LISTEN_EVENT_CHANNEL);
 
-  Function(String path) screenShotListener;
-  Function() noPermissionListener;
+  void Function(String path)? screenShotListener;
+  void Function()? noPermissionListener;
+
+  static const String platformVersion = '42';
 
   // 工厂模式
   factory ScreenShotListenPlugin() => _getInstance();
 
   static ScreenShotListenPlugin get instance => _getInstance();
-  static ScreenShotListenPlugin _instance;
+  static ScreenShotListenPlugin? _instance;
 
   ScreenShotListenPlugin._internal() {
     // 初始化
@@ -28,11 +30,11 @@ class ScreenShotListenPlugin {
       // print("接收到的数据data = ${data}");
       if (data['code'] != null && data['code'] == 0) {
         if (screenShotListener != null) {
-          screenShotListener(data['path']);
+          screenShotListener!(data['path']);
         }
       } else if (data['code'] != null && data['code'] == -1) {
         if (noPermissionListener != null) {
-          noPermissionListener();
+          noPermissionListener!();
         }
       }
     });
@@ -42,7 +44,7 @@ class ScreenShotListenPlugin {
     if (_instance == null) {
       _instance = new ScreenShotListenPlugin._internal();
     }
-    return _instance;
+    return _instance!;
   }
 
   //开始监听

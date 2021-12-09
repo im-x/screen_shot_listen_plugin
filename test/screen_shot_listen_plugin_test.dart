@@ -18,6 +18,6 @@ void main() {
   });
 
   test('getPlatformVersion', () async {
-    expect(await ScreenShotListenPlugin.platformVersion, '42');
+    expect(ScreenShotListenPlugin.platformVersion, '42');
   });
 }
