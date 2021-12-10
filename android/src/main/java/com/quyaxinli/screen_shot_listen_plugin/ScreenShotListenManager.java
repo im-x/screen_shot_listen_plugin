@@ -1,5 +1,6 @@
 package com.quyaxinli.screen_shot_listen_plugin;
 
+import android.content.ContentResolver;
 import android.content.Context;
 import android.database.ContentObserver;
 import android.database.Cursor;
@@ -10,6 +11,7 @@ import android.graphics.Color;
 import android.graphics.Point;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.provider.MediaStore;
@@ -190,14 +192,24 @@ public class ScreenShotListenManager {
     private void handleMediaContentChange(Uri contentUri) {
         Cursor cursor = null;
         try {
-            // 数据改变时查询数据库中最后加入的一条数据
-            cursor = mContext.getContentResolver().query(
-                    contentUri,
-                    Build.VERSION.SDK_INT < 16 ? MEDIA_PROJECTIONS : MEDIA_PROJECTIONS_API_16,
-                    null,
-                    null,
-                    MediaStore.Images.ImageColumns.DATE_MODIFIED + " desc limit 1"
-            );
+            final ContentResolver contentResolver = mContext.getContentResolver();
+            if(Build.VERSION.SDK_INT >= 29) {
+                final Bundle bundle = new Bundle();
+                bundle.putStringArray(ContentResolver.QUERY_ARG_SORT_COLUMNS, new String[]{MediaStore.Images.ImageColumns.DATE_MODIFIED});
+                bundle.putInt(ContentResolver.QUERY_ARG_SORT_DIRECTION, ContentResolver.QUERY_SORT_DIRECTION_DESCENDING);
+                bundle.putInt(ContentResolver.QUERY_ARG_LIMIT, 1);
+                bundle.putInt(ContentResolver.QUERY_ARG_OFFSET, 0);
+                cursor = contentResolver.query(contentUri, MEDIA_PROJECTIONS_API_16, bundle, null);
+            } else {
+                // 数据改变时查询数据库中最后加入的一条数据
+                cursor = contentResolver.query(
+                        contentUri,
+                        Build.VERSION.SDK_INT < 16 ? MEDIA_PROJECTIONS : MEDIA_PROJECTIONS_API_16,
+                        null,
+                        null,
+                        MediaStore.Images.ImageColumns.DATE_MODIFIED + " desc limit 1"
+                );
+            }
 
             if (cursor == null) {
                 Log.e(TAG, "Deviant logic.");
